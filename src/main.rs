@@ -1,29 +1,20 @@
 mod utils;
+mod entities;
+use entities::metadata::MetaData;
 
-static LANGUAGE: &str = "Rust";
-const THRESHOLD: i32 = 10;
+// static LANGUAGE: &str = "Rust";
+// const THRESHOLD: i32 = 10;
 
 fn main() {
-    // println!("Hello, world!");
+    utils::logger::info("Hello, world!".to_string());
+    utils::logger::warn("message can be truncated".to_string());
+    utils::logger::error("Oops, world!".to_string(), None);
+    // Now you can use MetaData struct
+    let metadata = MetaData {
+        user_agent: String::from("Mozilla/5.0"),
+        email: String::from("user@example.com"),
+        exp: 1234567890,
+    };
+    utils::logger::debug(metadata);
 
-    // #[derive(Debug)]
-    // struct Person {
-    //     name: String,
-    //     age: u8,
-    // }
-
-    // let person = Person {
-    //     name: String::from("Alice"),
-    //     age: 25,
-    // };
-
-    // println!("{:?}", person);
-    // println!("{}", person.name);
-    // println!("{}", LANGUAGE);
-    // let decimal = 65.4321_f32;
-    // println!("{}", decimal);
-
-    utils::logger::Info("Hello, world!".to_string());
-    utils::logger::Warn("message can be truncated".to_string());
-    utils::logger::Error("Oops, world!".to_string(), None);
 }

@@ -1,13 +1,13 @@
-pub fn Info(msg: String) -> String {
+pub fn info(msg: String) -> String {
     println!("[INFO] {}", msg);
     return format!("[INFO] {}", msg)
 }
 
-pub fn Warn(msg: String) {
+pub fn warn(msg: String) {
     println!("[WARN] {}", msg);
 }
 
-pub fn Error(msg: String, error: Option<String>) -> String {
+pub fn error(msg: String, error: Option<String>) -> String {
     match error {
         Some(err) => {
             println!("[ERROR] {} - {}", msg, err);
@@ -18,6 +18,10 @@ pub fn Error(msg: String, error: Option<String>) -> String {
             return format!("[ERROR] {}", msg);
         }
     }
+}
+
+pub fn debug<T: std::fmt::Debug>(obj: T) {
+    println!("[DEBUG] {:?}", obj);
 }
 
 #[cfg(test)]
