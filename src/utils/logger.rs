@@ -7,7 +7,7 @@ pub fn warn(msg: String) {
     println!("[WARN] {}", msg);
 }
 
-pub fn error(msg: String, error: Option<String>) -> String {
+pub fn fatal(msg: &String, error: Option<String>) -> String {
     match error {
         Some(err) => {
             println!("[ERROR] {} - {}", msg, err);
@@ -25,29 +25,43 @@ pub fn debug<T: std::fmt::Debug>(obj: T) {
 }
 
 #[cfg(test)]
-mod logger {
+mod tests {
     use super::*;
 
     #[test]
     fn test_info_logging() {
-        let message = String::from("Test message");
-        let result = Info(message);
-        assert_eq!(result, "[INFO] Test message");
+        let message = "Test info message".to_string();
+        let result = info(message);
+        assert_eq!(result, "[INFO] Test info message");
     }
 
     #[test]
-    fn test_info_error_no_additional() {
-        let message = String::from("Test message");
-        let result = Error(message, None);
-        assert_eq!(result, "[ERROR] Test message");
+    fn test_fatal_with_error() {
+        let message = "Main error".to_string();
+        let error = Some("Additional details".to_string());
+        let result = fatal(&message, error);
+        assert_eq!(result, "[ERROR] Main error - Additional details");
     }
 
     #[test]
-    fn test_info_error_additional_info() {
-        let message = String::from("Test message");
-        let add = Some(String::from("Info"));
-        let result = Error(message, add);
-        assert_eq!(result, "[ERROR] Test message - Info");
+    fn test_fatal_without_error() {
+        let message = "Simple error".to_string();
+        let result = fatal(&message, None);
+        assert_eq!(result, "[ERROR] Simple error");
+    }
+
+    #[test]
+    fn test_debug_logging() {
+        let test_struct = vec![1, 2, 3];
+        // Since debug() only prints and doesn't return, we just verify it doesn't panic
+        debug(test_struct);
+    }
+
+    #[test]
+    fn test_warn_logging() {
+        let message = "Test warning".to_string();
+        // Since warn() only prints and doesn't return, we just verify it doesn't panic
+        warn(message);
     }
 }
 
