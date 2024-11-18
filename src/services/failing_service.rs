@@ -1,5 +1,8 @@
 use std::error::Error;
 use std::fmt;
+use std::time::Duration;
+use tokio::time::sleep;
+
 #[derive(Debug)]
 pub enum AdventureError {
     NotPrepared(String),
@@ -24,6 +27,35 @@ pub fn call(is_ready: bool) -> Result<String, AdventureError> {
         crate::utils::logger::fatal(&error_message, None);
         Err(AdventureError::NoEquipment(error_message))
     }
+}
+
+async fn task1() -> i32 {
+    println!("Task 1");
+    // sleep 3 seconds
+    sleep(Duration::from_secs(3)).await;
+    println!("Task 1 done");
+    1000
+}
+
+async fn task2() -> i32 {
+    println!("Task 2");
+    // sleep 3 seconds
+    sleep(Duration::from_secs(1)).await;
+    println!("Task 2 done");
+    2000
+}
+
+pub async fn concurrency_call() -> (i32, i32) {
+    let task1_handle = tokio::spawn(task1());
+    let task2_handle = tokio::spawn(task2());
+
+    // First unwrap: Task execution status
+    let (task1_result, task2_result) = match tokio::try_join!(task1_handle, task2_handle) {
+        Ok((t1, t2)) => (t1, t2),
+        Err(e) => (0,0)
+    };
+
+    (task1_result,task2_result)
 }
 
 #[cfg(test)]

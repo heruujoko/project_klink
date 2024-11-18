@@ -5,7 +5,8 @@ mod services;
 // static LANGUAGE: &str = "Rust";
 // const THRESHOLD: i32 = 10;
 
-fn main() {
+#[tokio::main]
+async fn main() {
     utils::logger::info("Hello, world!".to_string());
     utils::logger::warn("message can be truncated".to_string());
     let err_m = "Error message".to_string();
@@ -21,4 +22,8 @@ fn main() {
         Ok(message) => println!("Success: {}", message),
         Err(e) => println!("Failed: {}", e)
     }
+    let (tk1_result, tk2_result) = services::failing_service::concurrency_call().await;
+    println!("Task 1 returned: {}", tk1_result);
+    println!("Task 2 returned: {}", tk2_result);
+    println!("combined {}", tk2_result + tk1_result);
 }
