@@ -2,12 +2,12 @@
 mod routes;
 mod handlers;
 mod entities;
+
+mod logics;
 #[rocket::main]
 async fn main() -> Result<(), rocket::Error> {
     let _rocket = rocket::build()
-        .mount("/", routes![routes::index])
-        .mount("/query", routes![routes::query])
-        .mount("/json", routes![routes::with_json])
+        .mount("/", routes![routes::index, routes::query, routes::with_json, routes::with_json_201, routes::maybe])
         .launch()
         .await?;
 

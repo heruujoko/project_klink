@@ -7,3 +7,9 @@ pub struct MetaData {
     pub email: String,
     pub exp: i64,
 }
+
+#[derive(Debug, Serialize)]
+pub struct MetaDataError {
+    pub code: String,
+    pub message: String,
+}

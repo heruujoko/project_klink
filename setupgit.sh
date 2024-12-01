@@ -1,1 +1,1 @@
-git config --local include.path ../.gitprofile
+git config --local include.path ../.gitconfig

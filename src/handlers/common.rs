@@ -1,4 +1,6 @@
 use crate::entities::metadata::MetaData;
+use crate::entities::metadata::MetaDataError;
+use crate::logics::mocks::mock_metadata;
 use rocket::serde::json::Json;
 
 pub fn common_index() -> &'static str {
@@ -13,13 +15,26 @@ pub fn common_query(name: Option<String>) -> String {
 }
 
 pub fn common_with_json() -> Json<MetaData> {
-    let meta_content = MetaData {
-        user_agent: "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/114.0.0.0 Safari/537.36".to_string(),
-        email: "alice@example.com".to_string(),
-        exp: 1690000000,
-    };
-
+    let meta_content = mock_metadata();
     Json(meta_content)
+}
+
+pub fn common_allow_fail(fail: Option<String>) -> Result<Json<MetaData>, Json<MetaDataError>> {
+    match fail {
+        Some(fail) => {
+            let error_content = MetaDataError {
+                code: "400".to_string(),
+                message: "Bad request".to_string(),
+            };
+            Err(Json(error_content))
+        }
+        None => {
+            let meta_content = mock_metadata();
+
+            Ok(Json(meta_content))
+        }
+    }
+
 }
 
 #[cfg(test)]
