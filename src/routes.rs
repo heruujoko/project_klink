@@ -9,3 +9,8 @@ pub fn index() -> &'static str {
 pub fn query(name: Option<String>) -> String {
    return handlers::common::common_query(name);
 }
+
+#[get("/?<name>")]
+pub fn query(name: Option<String>) -> String {
+   return handlers::common::common_query(name);
+}

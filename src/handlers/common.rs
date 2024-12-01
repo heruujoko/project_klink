@@ -1,3 +1,5 @@
+use rocket::http::Status;
+use rocket::response::{content, status};
 pub fn common_index() -> &'static str {
     "Hello, world!"
 }
@@ -7,6 +9,12 @@ pub fn common_query(name: Option<String>) -> String {
         Some(name) => format!("Hello, {}!", name),
         None => "You did not provide a name!".to_string(),
     }
+}
+
+pub fn common_with_json() -> status::Custom<content::Json<String>> {
+    let json_response = serde_json::json!({
+        "message": "Hello, world!"
+    });
 }
 
 #[cfg(test)]

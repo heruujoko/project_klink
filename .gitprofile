@@ -1,0 +1,17 @@
+# Git Profile Configuration
+
+[user]
+    name = Heru Joko P. Utomo
+    email = herujokoutomo@gmail.com
+
+[color]
+    ui = auto
+    diff = auto
+    status = auto
+    branch = auto
+
+[push]
+    default = simple
+
+[init]
+    defaultBranch = main
