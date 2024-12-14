@@ -7,6 +7,19 @@ use crate::entities::metadata::MetaDataError;
 use crate::guards::user_agent::UserAgentGuard;
 use crate::error::ErrorResponse;
 
+fn handle_guarded_request<G,F>(
+    guard: Result<G, Json<ErrorResponse>>,
+    handler: F
+) -> (Status, Result<Json<MetaData>, Json<ErrorResponse>>)
+where
+    F: FnOnce() -> Json<MetaData>
+{
+    match guard {
+        Ok(_) => (Status::Ok, Ok(handler())),
+        Err(e) => (rocket::http::Status { code: e.i_code }, Err(e))
+    }
+}
+
 #[get("/")]
 pub fn index() -> &'static str {
    return handlers::common::common_index();
@@ -19,10 +32,7 @@ pub fn query(name: Option<String>) -> String {
 
 #[get("/json", format = "application/json")]
 pub fn with_json(_guard: Result<UserAgentGuard, Json<ErrorResponse>>) -> (Status, Result<Json<MetaData>, Json<ErrorResponse>>) {
-    match _guard {
-        Ok(_) => (Status::Ok, Ok(handlers::common::common_with_json())),
-        Err(e) => (rocket::http::Status { code: e.i_code }, Err(e))
-    }
+    handle_guarded_request(_guard, handlers::common::common_with_json)
 }
 #[get("/201", format = "application/json")]
 pub fn with_json_201() -> (Status, Json<MetaData>) {
