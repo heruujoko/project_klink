@@ -2,6 +2,7 @@ use crate::handlers;
 use crate::entities::metadata::MetaData;
 use crate::entities::metadata::MetaDataError;
 use rocket::http::Status;
+use crate::guards::user_agent::UserAgentGuard;
 
 use rocket::serde::json::Json;
 
@@ -16,7 +17,7 @@ pub fn query(name: Option<String>) -> String {
 }
 
 #[get("/json", format = "application/json")]
-pub fn with_json() -> Json<MetaData> {
+pub fn with_json(_guard: UserAgentGuard) -> Json<MetaData> {
    return handlers::common::common_with_json();
 }
 
