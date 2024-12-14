@@ -1,7 +1,6 @@
 use rocket::http::Status;
-use rocket::request::{FromRequest, Outcome, Request};
+use rocket::request::{Outcome, Request, FromRequest};
 use rocket::serde::json::Json;
-use serde::Serialize;
 
 pub struct UserAgentGuard;
 #[derive(Debug)]
@@ -10,26 +9,23 @@ pub enum UAError {
     Invalid,
 }
 
-#[derive(Debug, Serialize)]
-pub struct ErrorResponse {
-    code: String,
-    message: String,
+#[derive(serde::Serialize, Debug)]
+pub enum NetworkResponse {
+    Created(String),
+    BadRequest(String),
+    Unauthorized(String),
+    NotFound(String),
+    Conflict(String),
 }
+
 #[rocket::async_trait]
 impl<'r> FromRequest<'r> for UserAgentGuard {
-    type Error = Json<ErrorResponse>;
+    type Error = Json<NetworkResponse>;
 
-    async fn from_request(request: &'r Request<'_>) -> Outcome<Self, Self::Error> {
-        match request.headers().get_one("User-Agent") {
+    async fn from_request(req: &'r Request<'_>) -> Outcome<Self, Json<NetworkResponse>> {
+        match req.headers().get_one("User-Agent") {
             Some(_user_agent) => Outcome::Success(UserAgentGuard),
-            None => {
-                let response = ErrorResponse {
-                    code: "MISSING".to_string(),
-                    message: "User-Agent header is missing".to_string(),
-                };
-
-                Outcome::Error((Status::Forbidden, Json(response)))
-            },
+            None => Outcome::Error((Status::Unauthorized, Json(NetworkResponse::Unauthorized("User-Agent header missing".to_string())))),
         }
     }
 }

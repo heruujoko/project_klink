@@ -3,6 +3,7 @@ use crate::entities::metadata::MetaData;
 use crate::entities::metadata::MetaDataError;
 use rocket::http::Status;
 use crate::guards::user_agent::UserAgentGuard;
+use crate::guards::user_agent::NetworkResponse;
 
 use rocket::serde::json::Json;
 
@@ -17,10 +18,12 @@ pub fn query(name: Option<String>) -> String {
 }
 
 #[get("/json", format = "application/json")]
-pub fn with_json(_guard: UserAgentGuard) -> Json<MetaData> {
-   return handlers::common::common_with_json();
+pub fn with_json(_guard: Result<UserAgentGuard, Json<NetworkResponse>>) -> (Status, Result<Json<MetaData>, Json<NetworkResponse>>) {
+    match _guard {
+        Ok(_) => (Status::Ok, Ok(handlers::common::common_with_json())),
+        Err(e) => (Status::BadRequest, Err(e))
+    }
 }
-
 #[get("/201", format = "application/json")]
 pub fn with_json_201() -> (Status, Json<MetaData>) {
    (Status::Created, handlers::common::common_with_json())
