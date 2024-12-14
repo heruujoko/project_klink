@@ -6,6 +6,8 @@ mod middlewares;
 mod guards;
 mod logics;
 
+mod error;
+
 use rocket::serde::json::Json;
 use rocket::request::{Request};
 use crate::guards::user_agent::UserAgentGuard;

@@ -1,11 +1,11 @@
+use rocket::http::Status;
+use rocket::serde::json::Json;
+
 use crate::handlers;
 use crate::entities::metadata::MetaData;
 use crate::entities::metadata::MetaDataError;
-use rocket::http::Status;
 use crate::guards::user_agent::UserAgentGuard;
-use crate::guards::user_agent::NetworkResponse;
-
-use rocket::serde::json::Json;
+use crate::error::ErrorResponse;
 
 #[get("/")]
 pub fn index() -> &'static str {
@@ -18,10 +18,10 @@ pub fn query(name: Option<String>) -> String {
 }
 
 #[get("/json", format = "application/json")]
-pub fn with_json(_guard: Result<UserAgentGuard, Json<NetworkResponse>>) -> (Status, Result<Json<MetaData>, Json<NetworkResponse>>) {
+pub fn with_json(_guard: Result<UserAgentGuard, Json<ErrorResponse>>) -> (Status, Result<Json<MetaData>, Json<ErrorResponse>>) {
     match _guard {
         Ok(_) => (Status::Ok, Ok(handlers::common::common_with_json())),
-        Err(e) => (Status::BadRequest, Err(e))
+        Err(e) => (rocket::http::Status { code: e.i_code }, Err(e))
     }
 }
 #[get("/201", format = "application/json")]
