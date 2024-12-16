@@ -1,6 +1,10 @@
 use crate::entities::metadata::MetaData;
 use crate::entities::metadata::MetaDataError;
+use crate::entities::metadata::MetaDataRequest;
 use crate::logics::mocks::mock_metadata;
+use crate::handlers::error::validate_incoming_request;
+use crate::error::ErrorResponse;
+
 use rocket::serde::json::Json;
 
 pub fn common_index() -> &'static str {
@@ -36,6 +40,21 @@ pub fn common_allow_fail(fail: Option<String>) -> Result<Json<MetaData>, Json<Me
     }
 
 }
+
+pub fn common_with_data_validation(payload: Json<MetaDataRequest>) -> Result<Json<MetaData>, Json<ErrorResponse>> {
+    let deserialized = payload.into_inner();
+    let valid = validate_incoming_request(&deserialized);
+    match valid {
+        Err(error) => {
+            Err(error)
+        }
+        Ok(_) => {
+            let meta_content = mock_metadata();
+            Ok(Json(meta_content))
+        }
+    }
+}
+
 
 #[cfg(test)]
 mod tests {

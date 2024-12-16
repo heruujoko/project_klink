@@ -4,6 +4,7 @@ use rocket::serde::json::Json;
 use crate::handlers;
 use crate::entities::metadata::MetaData;
 use crate::entities::metadata::MetaDataError;
+use crate::entities::metadata::MetaDataRequest;
 use crate::guards::user_agent::UserAgentGuard;
 use crate::error::ErrorResponse;
 
@@ -40,6 +41,15 @@ pub fn with_json_201() -> (Status, Json<MetaData>) {
 #[get("/maybe?<fail>", format = "application/json")]
 pub fn maybe(fail: Option<String>) -> (Status, Result<Json<MetaData>, Json<MetaDataError>>) {
    let result = handlers::common::common_allow_fail(fail);
+    match result {
+        Ok(_) => (Status::Created, result),
+        Err(_) => (Status::BadRequest, result),
+    }
+}
+
+#[post("/data", format = "application/json", data = "<payload>")]
+pub fn with_data_validation(payload: Json<MetaDataRequest>) -> (Status, Result<Json<MetaData>, Json<ErrorResponse>>) {
+    let result = handlers::common::common_with_data_validation(payload);
     match result {
         Ok(_) => (Status::Created, result),
         Err(_) => (Status::BadRequest, result),
