@@ -15,7 +15,7 @@ use crate::guards::user_agent::UserAgentGuard;
 #[rocket::main]
 async fn main() -> Result<(), rocket::Error> {
     let _rocket = rocket::build()
-        .mount("/", routes![routes::index, routes::query, routes::with_json, routes::with_json_201, routes::maybe])
+        .mount("/", routes![routes::index, routes::query, routes::with_json, routes::with_json_201, routes::maybe, routes::with_data_validation])
         .launch()
         .await?;
 

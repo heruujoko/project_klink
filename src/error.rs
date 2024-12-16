@@ -5,6 +5,7 @@ use std::fmt;
 pub struct ErrorResponse {
     pub code: String,
     pub message: String,
+    #[serde(skip_serializing)]
     pub request_id: String,
     #[serde(skip_serializing)]
     pub i_code: u16,
@@ -12,8 +13,7 @@ pub struct ErrorResponse {
 
 pub enum ErrorCodeName {
     MissingUserAgent,
-    InvalidToken,
-    NotFound,
+    InvalidRequest,
 }
 
 impl fmt::Display for ErrorCodeName {
@@ -26,8 +26,7 @@ impl ErrorCodeName {
     pub fn as_str(&self) -> &'static str {
         match self {
             ErrorCodeName::MissingUserAgent => "MISSING_USER_AGENT",
-            ErrorCodeName::InvalidToken => "INVALID_TOKEN",
-            ErrorCodeName::NotFound => "NOT_FOUND",
+            ErrorCodeName::InvalidRequest => "INVALID_REQUEST",
         }
     }
 }
