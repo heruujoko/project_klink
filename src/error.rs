@@ -14,6 +14,8 @@ pub struct ErrorResponse {
 pub enum ErrorCodeName {
     MissingUserAgent,
     InvalidRequest,
+    UnprocessableEntity,
+    NotFound,
 }
 
 impl fmt::Display for ErrorCodeName {
@@ -27,6 +29,8 @@ impl ErrorCodeName {
         match self {
             ErrorCodeName::MissingUserAgent => "MISSING_USER_AGENT",
             ErrorCodeName::InvalidRequest => "INVALID_REQUEST",
+            ErrorCodeName::UnprocessableEntity => "UNPROCESSABLE_ENTITY",
+            ErrorCodeName::NotFound => "NOT_FOUND",
         }
     }
 }
