@@ -16,6 +16,7 @@ pub enum ErrorCodeName {
     InvalidRequest,
     UnprocessableEntity,
     NotFound,
+    MissingEnvVar,
 }
 
 impl fmt::Display for ErrorCodeName {
@@ -31,6 +32,7 @@ impl ErrorCodeName {
             ErrorCodeName::InvalidRequest => "INVALID_REQUEST",
             ErrorCodeName::UnprocessableEntity => "UNPROCESSABLE_ENTITY",
             ErrorCodeName::NotFound => "NOT_FOUND",
+            ErrorCodeName::MissingEnvVar => "MISSING_ENV_VAR",
         }
     }
 }
