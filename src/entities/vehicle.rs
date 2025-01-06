@@ -6,7 +6,7 @@ use crate::utils::serializers::{custom_date_format, custom_optional_date_format}
 #[diesel(check_for_backend(diesel::pg::Pg))]
 #[derive(Debug, Serialize)]
 pub struct Vehicle {
-    pub id: i32,
+    pub id: i64,
     pub name: String,
     pub description: Option<String>,
     #[serde(with = "custom_date_format")]

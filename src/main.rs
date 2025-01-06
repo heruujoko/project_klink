@@ -54,7 +54,7 @@ async fn main() -> Result<(), rocket::Error> {
 
     let welcome = config::env::get_var("KLINK_WELCOME_MESSAGE");
     match welcome {
-        Ok(welcome) => println!("Server is running on port: {}", welcome),
+        Ok(welcome) => println!("{}", welcome),
         Err(err) => {
             println!("Error: {}", err.message);
             return Ok(());

@@ -2,7 +2,7 @@
 
 diesel::table! {
     vehicles (id) {
-        id -> Int4,
+        id -> Int8,
         #[max_length = 255]
         name -> Varchar,
         description -> Nullable<Text>,
