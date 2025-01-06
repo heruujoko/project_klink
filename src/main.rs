@@ -5,12 +5,11 @@ mod entities;
 mod middlewares;
 mod guards;
 mod logics;
+mod config;
 
 mod error;
 
 use rocket::serde::json::Json;
-use rocket::request::{Request};
-use crate::guards::user_agent::UserAgentGuard;
 
 #[catch(422)]
 fn unprocessable_entity() -> Json<error::ErrorResponse> {
@@ -40,6 +39,24 @@ fn notfound() -> Json<error::ErrorResponse> {
 
 #[rocket::main]
 async fn main() -> Result<(), rocket::Error> {
+    let all_required_env_set = config::env::setup_all_env();
+    match all_required_env_set {
+        Ok(_) => println!("All required environment variables are set"),
+        Err(err) => {
+            println!("Error: {}", err.message);
+            return Ok(());
+        }
+    }
+
+    let welcome = config::env::get_var("KLINK_WELCOME_MESSAGE");
+    match welcome {
+        Ok(welcome) => println!("Server is running on port: {}", welcome),
+        Err(err) => {
+            println!("Error: {}", err.message);
+            return Ok(());
+        }
+    }
+
     let _rocket = rocket::build()
         .mount("/", routes![routes::index, routes::query, routes::with_json, routes::with_json_201, routes::maybe, routes::with_data_validation])
         .register("/", catchers![unprocessable_entity, notfound])

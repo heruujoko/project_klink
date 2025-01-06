@@ -25,7 +25,7 @@ pub fn common_with_json() -> Json<MetaData> {
 
 pub fn common_allow_fail(fail: Option<String>) -> Result<Json<MetaData>, Json<MetaDataError>> {
     match fail {
-        Some(fail) => {
+        Some(_) => {
             let error_content = MetaDataError {
                 code: "400".to_string(),
                 message: "Bad request".to_string(),
