@@ -5,6 +5,7 @@ use crate::handlers;
 use crate::entities::metadata::MetaData;
 use crate::entities::metadata::MetaDataError;
 use crate::entities::metadata::MetaDataRequest;
+use crate::entities::vehicle::Vehicle;
 use crate::guards::user_agent::UserAgentGuard;
 use crate::error::ErrorResponse;
 
@@ -33,6 +34,7 @@ pub fn query(name: Option<String>) -> String {
 pub fn with_json(_guard: Result<UserAgentGuard, Json<ErrorResponse>>) -> (Status, Result<Json<MetaData>, Json<ErrorResponse>>) {
     handle_guarded_request::<UserAgentGuard, MetaData>(_guard, handlers::common::common_with_json)
 }
+
 #[get("/201", format = "application/json")]
 pub fn with_json_201() -> (Status, Json<MetaData>) {
    (Status::Created, handlers::common::common_with_json())
@@ -50,6 +52,15 @@ pub fn maybe(fail: Option<String>) -> (Status, Result<Json<MetaData>, Json<MetaD
 #[post("/data", format = "application/json", data = "<payload>")]
 pub fn with_data_validation(payload: Json<MetaDataRequest>) -> (Status, Result<Json<MetaData>, Json<ErrorResponse>>) {
     let result = handlers::common::common_with_data_validation(payload);
+    match result {
+        Ok(_) => (Status::Created, result),
+        Err(_) => (Status::BadRequest, result),
+    }
+}
+
+#[get("/vehicles", format = "application/json")]
+pub fn verchile_route(_guard: Result<UserAgentGuard, Json<ErrorResponse>>) -> (Status, Result<Json<Vec<Vehicle>>, Json<ErrorResponse>>) {
+    let result = handlers::vehicles::handler_all_vehicles();
     match result {
         Ok(_) => (Status::Created, result),
         Err(_) => (Status::BadRequest, result),

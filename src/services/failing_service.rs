@@ -1,4 +1,3 @@
-use std::error::Error;
 use std::fmt;
 use std::time::Duration;
 use tokio::time::sleep;
@@ -52,7 +51,7 @@ pub async fn concurrency_call() -> (i32, i32) {
     // First unwrap: Task execution status
     let (task1_result, task2_result) = match tokio::try_join!(task1_handle, task2_handle) {
         Ok((t1, t2)) => (t1, t2),
-        Err(e) => (0,0)
+        Err(_) => (0,0)
     };
 
     (task1_result,task2_result)
