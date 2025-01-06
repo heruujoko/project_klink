@@ -48,6 +48,15 @@ async fn main() -> Result<(), rocket::Error> {
         }
     }
 
+    let welcome = config::env::get_var("KLINK_WELCOME_MESSAGE");
+    match welcome {
+        Ok(welcome) => println!("Server is running on port: {}", welcome),
+        Err(err) => {
+            println!("Error: {}", err.message);
+            return Ok(());
+        }
+    }
+
     let _rocket = rocket::build()
         .mount("/", routes![routes::index, routes::query, routes::with_json, routes::with_json_201, routes::maybe, routes::with_data_validation])
         .register("/", catchers![unprocessable_entity, notfound])
