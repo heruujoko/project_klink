@@ -4,6 +4,7 @@ use crate::error::{ErrorCodeName, ErrorResponse};
 // Define as a static array to make it accessible across the file
 static REQUIRED_VARS: &[&str] = &[
     "KLINK_WELCOME_MESSAGE",
+    "DATABASE_URL",
 ];
 
 pub fn setup_all_env() -> Result<bool, ErrorResponse> {

@@ -6,8 +6,8 @@ mod middlewares;
 mod guards;
 mod logics;
 mod config;
-
 mod error;
+mod external;
 
 use rocket::serde::json::Json;
 
@@ -56,6 +56,8 @@ async fn main() -> Result<(), rocket::Error> {
             return Ok(());
         }
     }
+
+    external::database::connect_db();
 
     let _rocket = rocket::build()
         .mount("/", routes![routes::index, routes::query, routes::with_json, routes::with_json_201, routes::maybe, routes::with_data_validation])
