@@ -25,7 +25,6 @@ pub fn setup_all_env() -> Result<bool, ErrorResponse> {
 
 pub fn get_var(varname: &str) -> Result<String, ErrorResponse> {
     let fetched = env::var(varname);
-    // check if varname not in REQUED_VARS
     if !REQUIRED_VARS.contains(&varname) {
         let error_response = ErrorResponse {
             code: ErrorCodeName::UnregisteredVar.as_str().to_string(),
