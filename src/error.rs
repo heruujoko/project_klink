@@ -5,6 +5,7 @@ use std::fmt;
 pub struct ErrorResponse {
     pub code: String,
     pub message: String,
+    #[allow(dead_code)]
     #[serde(skip_serializing)]
     pub request_id: String,
     #[serde(skip_serializing)]

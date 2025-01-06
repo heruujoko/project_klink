@@ -10,8 +10,6 @@ mod config;
 mod error;
 
 use rocket::serde::json::Json;
-use rocket::request::{Request};
-use crate::guards::user_agent::UserAgentGuard;
 
 #[catch(422)]
 fn unprocessable_entity() -> Json<error::ErrorResponse> {

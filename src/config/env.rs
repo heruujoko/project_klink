@@ -4,9 +4,7 @@ use crate::error::{ErrorCodeName, ErrorResponse};
 pub fn setup_all_env() -> Result<bool, ErrorResponse> {
     // Verify required environment variables
     let required_vars = vec![
-        "DATABASE_URL",
-        "API_KEY",
-        "SERVER_PORT"
+        "SERVER_PORT",
     ];
 
     for req_var in required_vars {
