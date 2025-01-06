@@ -767,6 +767,7 @@ name = "klink"
 version = "0.1.0"
 dependencies = [
  "diesel",
+ "once_cell",
  "rocket",
  "serde",
  "tokio",

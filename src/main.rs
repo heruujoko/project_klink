@@ -57,7 +57,22 @@ async fn main() -> Result<(), rocket::Error> {
         }
     }
 
-    external::database::connect_db();
+    let connection_result = external::database::initialize_db();
+    match connection_result {
+        Ok(_) => println!("Database connection established"),
+        Err(err) => {
+            println!("Error: {}", err);
+            return Ok(());
+        }
+    }
+    let connection_result_ro = external::database::initialize_db_ro();
+    match connection_result_ro {
+        Ok(_) => println!("Database connection established"),
+        Err(err) => {
+            println!("Error: {}", err);
+            return Ok(());
+        }
+    }
 
     let _rocket = rocket::build()
         .mount("/", routes![routes::index, routes::query, routes::with_json, routes::with_json_201, routes::maybe, routes::with_data_validation])
