@@ -10,6 +10,7 @@ mod error;
 mod external;
 
 use rocket::serde::json::Json;
+use tokio::try_join;
 
 #[catch(422)]
 fn unprocessable_entity() -> Json<error::ErrorResponse> {
@@ -57,19 +58,14 @@ async fn main() -> Result<(), rocket::Error> {
         }
     }
 
-    let connection_result = external::database::initialize_db();
-    match connection_result {
-        Ok(_) => println!("Database connection established"),
+    let connection_results = try_join!(
+        external::database::initialize_db(),
+        external::database::initialize_db_ro()
+    );
+    match connection_results {
+        Ok(_) => println!("All dependency connections established"),
         Err(err) => {
-            println!("Error: {}", err);
-            return Ok(());
-        }
-    }
-    let connection_result_ro = external::database::initialize_db_ro();
-    match connection_result_ro {
-        Ok(_) => println!("Database connection established"),
-        Err(err) => {
-            println!("Error: {}", err);
+            println!("Error establishing dependency connections: {}", err);
             return Ok(());
         }
     }

@@ -6,7 +6,7 @@ use once_cell::sync::OnceCell;
 static DB_CONNECTION: OnceCell<Mutex<PgConnection>> = OnceCell::new();
 static DB_CONNECTION_RO: OnceCell<Mutex<PgConnection>> = OnceCell::new();
 
-pub fn initialize_db() -> Result<(), String> {
+pub async fn initialize_db() -> Result<(), String> {
     let db_url = config::env::get_var("KLINK_DATABASE_URL").unwrap();
     let conn = PgConnection::establish(&db_url)
         .map_err(|e| format!("Failed to connect to database: {}", e))?;
@@ -15,7 +15,7 @@ pub fn initialize_db() -> Result<(), String> {
         .map_err(|_| "Database already initialized".to_string())
 }
 
-pub fn initialize_db_ro() -> Result<(), String> {
+pub async fn initialize_db_ro() -> Result<(), String> {
     let db_url = config::env::get_var("KLINK_DATABASE_URL_RO").unwrap();
     let conn = PgConnection::establish(&db_url)
         .map_err(|e| format!("Failed to connect to database RO: {}", e))?;
