@@ -1,36 +1,6 @@
 use diesel::prelude::*;
 use serde::Serialize;
-
-mod custom_date_format {
-    use chrono::NaiveDateTime;
-    use serde::{self, Serializer};
-
-    pub fn serialize<S>(date: &NaiveDateTime, serializer: S) -> Result<S::Ok, S::Error>
-    where
-        S: Serializer,
-    {
-        let timestamp = date.timestamp();
-        serializer.serialize_i64(timestamp)
-    }
-}
-
-mod custom_optional_date_format {
-    use chrono::NaiveDateTime;
-    use serde::{self, Serializer};
-
-    pub fn serialize<S>(date: &Option<NaiveDateTime>, serializer: S) -> Result<S::Ok, S::Error>
-    where
-        S: Serializer,
-    {
-        match date {
-            Some(date) => serializer.serialize_i64(date.timestamp()),
-            None => serializer.serialize_none()
-        }
-    }
-}
-
-
-
+use crate::utils::serializers::{custom_date_format, custom_optional_date_format};
 #[derive(Queryable, Selectable)]
 #[diesel(table_name = crate::schema::vehicles)]
 #[diesel(check_for_backend(diesel::pg::Pg))]
