@@ -74,7 +74,7 @@ async fn main() -> Result<(), rocket::Error> {
     }
 
     let _rocket = rocket::build()
-        .mount("/", routes![routes::index, routes::query, routes::with_json, routes::with_json_201, routes::maybe, routes::with_data_validation, routes::verchile_route])
+        .mount("/", routes![routes::index, routes::query, routes::with_json, routes::maybe, routes::with_data_validation, routes::verchile_route])
         .register("/", catchers![unprocessable_entity, notfound])
         .launch()
         .await?;
