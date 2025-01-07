@@ -4,6 +4,7 @@ use std::any::Any;
 use rocket::http::Status;
 use rocket::serde::json::Json;
 
+use crate::entities::raw_vehicle::RawVehicle;
 use crate::handlers;
 use crate::entities::metadata::MetaData;
 use crate::entities::metadata::MetaDataError;
@@ -90,4 +91,13 @@ pub fn verchile_route(user_agent_guard: Result<UserAgentGuard, Json<ErrorRespons
     ];
 
     handle_layered_guarded_request(guards, handlers::vehicles::handler_all_vehicles)
+}
+
+#[get("/vehiclesraw", format = "application/json")]
+pub fn vehicle_raw_route(user_agent_guard: Result<UserAgentGuard, Json<ErrorResponse>>) -> (Status, Result<Json<Vec<RawVehicle>>, Json<ErrorResponse>>) {
+    let guards = vec![
+        user_agent_guard.map(|g| Box::new(g) as Box<dyn Any>),
+    ];
+
+    handle_layered_guarded_request(guards, handlers::vehicles::handler_raw_vehicles)
 }
