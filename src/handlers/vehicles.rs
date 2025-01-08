@@ -1,6 +1,6 @@
 use rocket::serde::json::Json;
 use crate::entities::raw_vehicle::RawVehicle;
-use crate::entities::vehicle::Vehicle;
+use crate::entities::vehicle::{NewVehicleRequest, Vehicle};
 use crate::error::{ErrorResponse, ErrorCodeName};
 use crate::services::vehicle_service::{get_all_vehicles, get_raw_vehicles};
 
@@ -34,4 +34,8 @@ pub fn handler_raw_vehicles() -> Result<Json<Vec<RawVehicle>>, Json<ErrorRespons
         })),
         
     }
+}
+
+pub fn handler_add_vehicle(payload: Json<NewVehicleRequest>) -> Result<String, Json<ErrorResponse>> {
+    Ok("Yea".to_string())
 }

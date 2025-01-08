@@ -9,7 +9,7 @@ use crate::handlers;
 use crate::entities::metadata::MetaData;
 use crate::entities::metadata::MetaDataError;
 use crate::entities::metadata::MetaDataRequest;
-use crate::entities::vehicle::Vehicle;
+use crate::entities::vehicle::{Vehicle, NewVehicleRequest};
 use crate::guards::user_agent::UserAgentGuard;
 use crate::error::ErrorResponse;
 
@@ -51,6 +51,22 @@ fn handle_layered_guarded_request<T>(
         Err(e) => (Status::from_code(e.i_code).unwrap(), Err(e)),
     }
 }
+
+fn validate_layered_guards(
+    guards: Vec<Result<Box<dyn Any>, Json<ErrorResponse>>>
+) -> Result<bool, Json<ErrorResponse>>
+{
+    // Check if any guard failed
+    if let Some(failed_guard) = guards.into_iter().find(|g| g.is_err()) {
+        if let Err(e) = failed_guard {
+            return Err(e);
+        }
+    }
+
+    return Ok(true);
+}
+
+
 #[get("/")]
 pub fn index() -> &'static str {
    return handlers::common::common_index();
@@ -100,4 +116,17 @@ pub fn vehicle_raw_route(user_agent_guard: Result<UserAgentGuard, Json<ErrorResp
     ];
 
     handle_layered_guarded_request(guards, handlers::vehicles::handler_raw_vehicles)
+}
+
+#[post("/vehicles", format = "application/json", data = "<payload>")]
+pub fn vehicle_post_route(user_agent_guard: Result<UserAgentGuard, Json<ErrorResponse>>, payload: Json<NewVehicleRequest>) -> (Status, Result<String, Json<ErrorResponse>>) {
+    let guards = vec![
+        user_agent_guard.map(|g| Box::new(g) as Box<dyn Any>),
+    ];
+    validate_layered_guards(guards)
+        .and_then(|_| handlers::vehicles::handler_add_vehicle(payload))
+        .map_or_else(
+            |e| (Status::from_code(e.i_code).unwrap(), Err(e)),
+            |_| (Status::Created, Ok("Success".to_string()))
+        )
 }

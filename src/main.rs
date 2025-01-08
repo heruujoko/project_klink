@@ -83,7 +83,8 @@ async fn main() -> Result<(), rocket::Error> {
                 routes::maybe,
                 routes::with_data_validation,
                 routes::verchile_route,
-                routes::vehicle_raw_route
+                routes::vehicle_raw_route,
+                routes::vehicle_post_route
             ],
         )
         .register("/", catchers![unprocessable_entity, notfound])

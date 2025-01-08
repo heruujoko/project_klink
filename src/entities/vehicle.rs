@@ -1,6 +1,7 @@
 use diesel::prelude::*;
-use serde::Serialize;
+use serde::{Deserialize, Serialize};
 use crate::utils::serializers::{custom_date_format, custom_optional_date_format};
+use validator::Validate;
 #[derive(Queryable, Selectable)]
 #[diesel(table_name = crate::schema::vehicles)]
 #[diesel(check_for_backend(diesel::pg::Pg))]
@@ -19,4 +20,12 @@ pub struct Vehicle {
 
     #[serde(with = "custom_optional_date_format")]
     #[diesel(sql_type = diesel::sql_types::Nullable<diesel::sql_types::Timestamptz>)]
-    pub deleted_at: Option<chrono::NaiveDateTime>,}
+    pub deleted_at: Option<chrono::NaiveDateTime>,
+}
+
+#[derive(Debug, Deserialize, Validate)]
+pub struct NewVehicleRequest {
+    #[validate(length(min = 1, max = 2))]
+    pub name: String,
+    pub description: Option<String>,
+}
