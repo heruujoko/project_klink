@@ -119,7 +119,7 @@ pub fn vehicle_raw_route(user_agent_guard: Result<UserAgentGuard, Json<ErrorResp
 }
 
 #[post("/vehicles", format = "application/json", data = "<payload>")]
-pub fn vehicle_post_route(user_agent_guard: Result<UserAgentGuard, Json<ErrorResponse>>, payload: Json<NewVehicleRequest>) -> (Status, Result<String, Json<ErrorResponse>>) {
+pub fn vehicle_post_route(user_agent_guard: Result<UserAgentGuard, Json<ErrorResponse>>, payload: Json<NewVehicleRequest>) -> (Status, Result<Json<Vehicle>, Json<ErrorResponse>>) {
     let guards = vec![
         user_agent_guard.map(|g| Box::new(g) as Box<dyn Any>),
     ];
@@ -127,6 +127,6 @@ pub fn vehicle_post_route(user_agent_guard: Result<UserAgentGuard, Json<ErrorRes
         .and_then(|_| handlers::vehicles::handler_add_vehicle(payload))
         .map_or_else(
             |e| (Status::from_code(e.i_code).unwrap(), Err(e)),
-            |_| (Status::Created, Ok("Success".to_string()))
+            |resp| (Status::Created, Ok(resp))
         )
 }
