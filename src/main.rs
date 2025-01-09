@@ -6,10 +6,14 @@ mod middlewares;
 mod guards;
 mod logics;
 mod config;
-
 mod error;
+mod external;
+mod services;
+mod schema;
+mod utils;
 
 use rocket::serde::json::Json;
+use tokio::try_join;
 
 #[catch(422)]
 fn unprocessable_entity() -> Json<error::ErrorResponse> {
@@ -50,15 +54,39 @@ async fn main() -> Result<(), rocket::Error> {
 
     let welcome = config::env::get_var("KLINK_WELCOME_MESSAGE");
     match welcome {
-        Ok(welcome) => println!("Server is running on port: {}", welcome),
+        Ok(welcome) => println!("{}", welcome),
         Err(err) => {
             println!("Error: {}", err.message);
             return Ok(());
         }
     }
 
+    let connection_results = try_join!(
+        external::database::initialize_db(),
+        external::database::initialize_db_ro()
+    );
+    match connection_results {
+        Ok(_) => println!("All dependency connections established"),
+        Err(err) => {
+            println!("Error establishing dependency connections: {}", err);
+            return Ok(());
+        }
+    }
+
     let _rocket = rocket::build()
-        .mount("/", routes![routes::index, routes::query, routes::with_json, routes::with_json_201, routes::maybe, routes::with_data_validation])
+        .mount(
+            "/",
+            routes![
+                routes::index,
+                routes::query,
+                routes::with_json,
+                routes::maybe,
+                routes::with_data_validation,
+                routes::verchile_route,
+                routes::vehicle_raw_route,
+                routes::vehicle_post_route
+            ],
+        )
         .register("/", catchers![unprocessable_entity, notfound])
         .launch()
         .await?;

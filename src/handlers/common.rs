@@ -18,9 +18,9 @@ pub fn common_query(name: Option<String>) -> String {
     }
 }
 
-pub fn common_with_json() -> Json<MetaData> {
+pub fn common_with_json() -> Result<Json<MetaData>, Json<ErrorResponse>> {
     let meta_content = mock_metadata();
-    Json(meta_content)
+    Ok(Json(meta_content))
 }
 
 pub fn common_allow_fail(fail: Option<String>) -> Result<Json<MetaData>, Json<MetaDataError>> {
