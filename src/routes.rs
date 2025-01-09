@@ -12,6 +12,7 @@ use crate::entities::metadata::MetaDataRequest;
 use crate::entities::vehicle::{Vehicle, NewVehicleRequest};
 use crate::guards::user_agent::UserAgentGuard;
 use crate::error::ErrorResponse;
+use crate::entities::passengers::{PassengerAuthRequest, PassengerAuthResponse};
 
 fn handle_guarded_request<G,T>(
     guard: Result<G, Json<ErrorResponse>>,
@@ -129,4 +130,20 @@ pub fn vehicle_post_route(user_agent_guard: Result<UserAgentGuard, Json<ErrorRes
             |e| (Status::from_code(e.i_code).unwrap(), Err(e)),
             |resp| (Status::Created, Ok(resp))
         )
+}
+
+// passengers sections
+// prefix /api/v1/passengers
+#[post("/auth", format = "application/json", data = "<payload>")]
+pub fn api_v1_passengers_auth(
+    payload: Json<PassengerAuthRequest>,
+) -> (
+    Status,
+    Result<Json<PassengerAuthResponse>, Json<ErrorResponse>>,
+) {
+    let result = handlers::passengers::handler_authenticate_passenger(payload);
+    match result {
+        Ok(_) => (Status::Ok, result),
+        Err(_) => (Status::BadRequest, result),
+    }
 }

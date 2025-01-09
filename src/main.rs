@@ -87,6 +87,12 @@ async fn main() -> Result<(), rocket::Error> {
                 routes::vehicle_post_route
             ],
         )
+        .mount(
+            "/api/v1/passenger",
+            routes![
+                routes::api_v1_passengers_auth,
+            ],
+        )
         .register("/", catchers![unprocessable_entity, notfound])
         .launch()
         .await?;
