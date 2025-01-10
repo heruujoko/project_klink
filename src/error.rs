@@ -5,11 +5,6 @@ use std::fmt;
 pub struct ErrorResponse {
     pub code: String,
     pub message: String,
-    #[allow(dead_code)]
-    #[serde(skip_serializing)]
-    pub request_id: String,
-    #[serde(skip_serializing)]
-    pub i_code: u16,
 }
 
 pub enum ErrorCodeName {
@@ -18,7 +13,8 @@ pub enum ErrorCodeName {
     UnprocessableEntity,
     NotFound,
     MissingEnvVar,
-    UnregisteredVar
+    UnregisteredVar,
+    RegistrationFailed,
 }
 
 impl fmt::Display for ErrorCodeName {
@@ -36,6 +32,7 @@ impl ErrorCodeName {
             ErrorCodeName::NotFound => "NOT_FOUND",
             ErrorCodeName::MissingEnvVar => "MISSING_ENV_VAR",
             ErrorCodeName::UnregisteredVar => "UNREGISTERED_VAR",
+            ErrorCodeName::RegistrationFailed => "REGISTRATION_FAILED",
         }
     }
 }

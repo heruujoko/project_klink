@@ -1,15 +1,16 @@
-#[macro_use] extern crate rocket;
-mod routes;
-mod handlers;
-mod entities;
-mod middlewares;
-mod guards;
-mod logics;
+#[macro_use]
+extern crate rocket;
 mod config;
+mod entities;
 mod error;
 mod external;
-mod services;
+mod guards;
+mod handlers;
+mod logics;
+mod middlewares;
+mod routes;
 mod schema;
+mod services;
 mod utils;
 
 use rocket::serde::json::Json;
@@ -22,8 +23,6 @@ fn unprocessable_entity() -> Json<error::ErrorResponse> {
             .as_str()
             .to_string(),
         message: "Unprocessable Entity".to_string(),
-        request_id: String::new(),
-        i_code: 422,
     };
     Json(default422)
 }
@@ -31,12 +30,8 @@ fn unprocessable_entity() -> Json<error::ErrorResponse> {
 #[catch(404)]
 fn notfound() -> Json<error::ErrorResponse> {
     let default422 = error::ErrorResponse {
-        code: error::ErrorCodeName::NotFound
-            .as_str()
-            .to_string(),
+        code: error::ErrorCodeName::NotFound.as_str().to_string(),
         message: "Not Found".to_string(),
-        request_id: String::new(),
-        i_code: 404,
     };
     Json(default422)
 }
@@ -91,6 +86,7 @@ async fn main() -> Result<(), rocket::Error> {
             "/api/v1/passenger",
             routes![
                 routes::api_v1_passengers_auth,
+                routes::api_v1_passengers_registration
             ],
         )
         .register("/", catchers![unprocessable_entity, notfound])

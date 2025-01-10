@@ -1,5 +1,5 @@
-use std::env;
 use crate::error::{ErrorCodeName, ErrorResponse};
+use std::env;
 
 // Define as a static array to make it accessible across the file
 static REQUIRED_VARS: &[&str] = &[
@@ -15,8 +15,6 @@ pub fn setup_all_env() -> Result<bool, ErrorResponse> {
             let error_response = ErrorResponse {
                 code: ErrorCodeName::MissingEnvVar.as_str().to_string(),
                 message: format!("Missing environment variable: please ensure {} is available in your system variable", req_var),
-                request_id: String::new(),
-                i_code: 500,
             };
             return Err(error_response);
         }
@@ -31,21 +29,15 @@ pub fn get_var(varname: &str) -> Result<String, ErrorResponse> {
         let error_response = ErrorResponse {
             code: ErrorCodeName::UnregisteredVar.as_str().to_string(),
             message: format!("Access to unregistered environment variable: {}", varname),
-            request_id: String::new(),
-            i_code: 500,
         };
         return Err(error_response);
     }
 
     match fetched {
         Ok(value) => {
-            let parsed = value.parse().map_err(|_| {
-                ErrorResponse {
+            let parsed = value.parse().map_err(|_| ErrorResponse {
                 code: ErrorCodeName::UnregisteredVar.as_str().to_string(),
-                    message: format!("Invalid value for environment variable: {}", varname),
-                    request_id: String::new(),
-                    i_code: 500,
-                }
+                message: format!("Invalid value for environment variable: {}", varname),
             })?;
             Ok(parsed)
         }
@@ -53,8 +45,6 @@ pub fn get_var(varname: &str) -> Result<String, ErrorResponse> {
             let error_response = ErrorResponse {
                 code: ErrorCodeName::MissingEnvVar.as_str().to_string(),
                 message: format!("Missing environment variable: {}", varname),
-                request_id: String::new(),
-                i_code: 500,
             };
             Err(error_response)
         }

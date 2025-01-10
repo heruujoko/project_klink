@@ -1,8 +1,8 @@
-use rocket::http::Status;
-use rocket::request::{Outcome, Request, FromRequest};
-use rocket::serde::json::Json;
-use crate::error::ErrorResponse;
 use crate::error::ErrorCodeName;
+use crate::error::ErrorResponse;
+use rocket::http::Status;
+use rocket::request::{FromRequest, Outcome, Request};
+use rocket::serde::json::Json;
 
 pub struct UserAgentGuard;
 
@@ -15,10 +15,8 @@ impl<'r> FromRequest<'r> for UserAgentGuard {
             Some(_user_agent) => Outcome::Success(UserAgentGuard),
             None => {
                 let error_response = ErrorResponse {
-                    code:  ErrorCodeName::MissingUserAgent.to_string(),
+                    code: ErrorCodeName::MissingUserAgent.to_string(),
                     message: "User-Agent header missing".to_string(),
-                    request_id: "".to_string(),
-                    i_code: Status::Unauthorized.code as u16,
                 };
 
                 Outcome::Error((Status::Unauthorized, Json(error_response)))
