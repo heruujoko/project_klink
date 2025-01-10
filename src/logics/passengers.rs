@@ -3,12 +3,12 @@ use crate::entities::passengers::{
 };
 use crate::error::{ErrorCodeName, ErrorResponse};
 use crate::services::passenger_service::{get_a_passenger, register_passenger};
-use crate::utils::crypto::hash_password;
+use crate::utils::crypto::{hash_compare, hash_password};
 use jsonwebtoken::{encode, EncodingKey, Header};
 
 use chrono::{Duration, Utc};
 
-pub fn generate_session_token(email: String) -> Result<String, ErrorResponse> {
+pub fn generate_session_token(email: String, password: String) -> Result<String, ErrorResponse> {
     let p = get_a_passenger(email);
     if p.is_err() {
         return Err(ErrorResponse {
@@ -16,8 +16,14 @@ pub fn generate_session_token(email: String) -> Result<String, ErrorResponse> {
             message: "Failed to get passenger".to_string(),
         });
     }
-
     let found_p = p.unwrap();
+    let password_match = hash_compare(password.as_str(), found_p.password.as_str());
+    if !password_match {
+        return Err(ErrorResponse {
+            code: ErrorCodeName::InvalidRequest.to_string(),
+            message: "Invalid password".to_string(),
+        });
+    }
 
     let expiration_time = Utc::now()
         .checked_add_signed(Duration::hours(8))

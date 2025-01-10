@@ -11,7 +11,7 @@ pub fn handler_authenticate_passenger(
     payload: Json<PassengerAuthRequest>,
 ) -> Result<Json<PassengerAuthResponse>, Json<ErrorResponse>> {
     let parsed = payload.into_inner();
-    let token = generate_session_token(parsed.email.to_string());
+    let token = generate_session_token(parsed.email.to_string(), parsed.password.to_string());
     if token.is_err() {
         return Err(Json(ErrorResponse {
             code: ErrorCodeName::InvalidRequest.to_string(),
