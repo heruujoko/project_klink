@@ -8,6 +8,7 @@ use crate::entities::metadata::MetaDataError;
 use crate::entities::metadata::MetaDataRequest;
 use crate::entities::passengers::{
     Passenger, PassengerAuthRequest, PassengerAuthResponse, PassengerRegistrationRequest,
+    PassengerSafeResponse,
 };
 use crate::entities::raw_vehicle::RawVehicle;
 use crate::entities::vehicle::{NewVehicleRequest, Vehicle};
@@ -153,7 +154,10 @@ pub fn api_v1_passengers_auth(
 #[post("/register", format = "application/json", data = "<payload>")]
 pub fn api_v1_passengers_registration(
     payload: Json<PassengerRegistrationRequest>,
-) -> (Status, Result<Json<Passenger>, Json<ErrorResponse>>) {
+) -> (
+    Status,
+    Result<Json<PassengerSafeResponse>, Json<ErrorResponse>>,
+) {
     let result = handlers::passengers::handler_register_passenger(payload);
     match result {
         Ok(_) => (Status::Ok, result),

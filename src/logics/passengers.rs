@@ -1,6 +1,9 @@
-use crate::entities::passengers::{Passenger, PassengerRegistrationRequest, PassengerTokenClaims};
+use crate::entities::passengers::{
+    PassengerRegistrationRequest, PassengerSafeResponse, PassengerTokenClaims,
+};
 use crate::error::{ErrorCodeName, ErrorResponse};
 use crate::services::passenger_service::{get_a_passenger, register_passenger};
+use crate::utils::crypto::hash_password;
 use jsonwebtoken::{encode, EncodingKey, Header};
 
 use chrono::{Duration, Utc};
@@ -43,13 +46,28 @@ pub fn generate_session_token(email: String) -> Result<String, ErrorResponse> {
 
 pub fn register_new_passenger(
     payload: PassengerRegistrationRequest,
-) -> Result<Passenger, ErrorResponse> {
-    let p = register_passenger(payload);
+) -> Result<PassengerSafeResponse, ErrorResponse> {
+    let hashed = hash_password(payload.password);
+    let hashed_payload = PassengerRegistrationRequest {
+        email: payload.email,
+        password: hashed.to_string(),
+        name: payload.name,
+        phone: payload.phone,
+        address: payload.address,
+    };
+    let p = register_passenger(hashed_payload);
     if p.is_err() {
         return Err(ErrorResponse {
             code: ErrorCodeName::RegistrationFailed.to_string(),
             message: "Failed to register passenger".to_string(),
         });
     }
-    Ok(p.unwrap())
+    let p = p.unwrap();
+    let resp = PassengerSafeResponse {
+        name: p.name,
+        email: p.email,
+        phone: p.phone,
+        address: p.address,
+    };
+    Ok(resp)
 }

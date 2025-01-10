@@ -1,7 +1,8 @@
 use rocket::serde::json::Json;
 
 use crate::entities::passengers::{
-    Passenger, PassengerAuthRequest, PassengerAuthResponse, PassengerRegistrationRequest,
+    PassengerAuthRequest, PassengerAuthResponse, PassengerRegistrationRequest,
+    PassengerSafeResponse,
 };
 use crate::error::{ErrorCodeName, ErrorResponse};
 use crate::logics::passengers::{generate_session_token, register_new_passenger};
@@ -27,7 +28,7 @@ pub fn handler_authenticate_passenger(
 
 pub fn handler_register_passenger(
     payload: Json<PassengerRegistrationRequest>,
-) -> Result<Json<Passenger>, Json<ErrorResponse>> {
+) -> Result<Json<PassengerSafeResponse>, Json<ErrorResponse>> {
     let parsed = payload.into_inner();
     let resp = register_new_passenger(parsed);
     return match resp {

@@ -10,8 +10,8 @@ pub struct Passenger {
     pub id: i64,
     pub name: String,
     pub email: String,
-    pub phone: String,
     pub password: String,
+    pub phone: String,
     pub address: Option<String>,
 
     #[serde(with = "custom_date_format")]
@@ -47,12 +47,24 @@ pub struct PassengerTokenClaims {
     pub exp: usize,
 }
 
-#[derive(Debug, Serialize, Deserialize, Insertable)]
+#[derive(Debug, Serialize, Deserialize, Insertable, Validate)]
 #[diesel(table_name = crate::schema::passengers)]
 pub struct PassengerRegistrationRequest {
+    #[validate(length(min = 1))]
+    pub name: String,
+    #[validate(length(min = 1))]
+    pub email: String,
+    #[validate(length(min = 1))]
+    pub phone: String,
+    #[validate(length(min = 1))]
+    pub password: String,
+    pub address: Option<String>,
+}
+
+#[derive(Debug, Serialize, Deserialize)]
+pub struct PassengerSafeResponse {
     pub name: String,
     pub email: String,
-    pub password: String,
     pub phone: String,
     pub address: Option<String>,
 }

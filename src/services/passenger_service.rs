@@ -25,8 +25,8 @@ pub fn register_passenger(
     let conn = get_connection();
     let uconn = &mut *conn.lock().unwrap();
 
-    let res = diesel::insert_into(passengers)
+    let passenger: Passenger = diesel::insert_into(passengers)
         .values(&payload)
-        .get_result(uconn);
-    return res;
+        .get_result(uconn)?;
+    Ok(passenger)
 }

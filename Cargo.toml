@@ -12,3 +12,4 @@ diesel = { version = "2.2.0", features = ["postgres", "chrono"] }
 once_cell = "1.8"
 chrono = { version = "0.4", features = ["unstable-locales", "serde"] }
 jsonwebtoken = "9"
+bcrypt = "0.16.0"
